@@ -2,7 +2,7 @@
 
 Author : Mondoa Nelson
 
-PrimeCare is an application to Manage a Hospital.
+PrimeCare is a Jave Enterprise Web application to Manage a Hospital.
 
 Modules
 --------------------------
