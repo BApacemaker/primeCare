@@ -7,6 +7,8 @@ PrimeCare is an application to Manage a Hospital.
 Modules
 --------------------------
 
+- Ward Management
+- Bed Management
 - Department Management
 - Patient Management
 - Branch Management
@@ -33,4 +35,40 @@ Technologies
 - JAVA Server Faces (JSF)
 - PrimeFaces
 - Postgresql
+
+
+Overview
+---------------------------
+
+- Database
+
+![](-pics/db.png)
+
+
+- Code
+
+![](-pics/netbeans.png)
+
+
+- Authentication
+
+![](-pics/cover.png)
+
+![](-pics/login.png)
+
+- DashBoard
+
+![](-pics/chart.png)
+
+- Account
+
+![](-pics/medserv.png)
+
+- Privileges
+
+![](-pics/priv.png)
+
+- Medical Service
+
+![](-pics/acc.png)
 
