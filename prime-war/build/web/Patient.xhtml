@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8' ?>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+     <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionController.watchOut()}" />
+    </f:metadata>
+    <body>
+
+        <ui:composition template="./home.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="form1">
+                         <center>
+                            <p:outputLabel id="msg" value="#{patientController.msg}" style="color:green;" />
+                         </center>
+                        <p:separator />
+                        <p:spacer height="20"></p:spacer>
+                        <h1><h:outputText value="List of Patients"  style="color:#173f75cc; font-family:cursive;"/></h1>
+                        <p:dataTable id="table" value="#{patientController.listOfPatient}" var="item"
+                                     selectionMode="single" selection="#{patientController.patient}"
+                                     paginator="true"
+                                     rowKey="#{item.idpatient}"
+                                     rows="10"
+                                     rowsPerPageTemplate="10,20,30,40,50"
+                                     >
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Name}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.name}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Location}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.location}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Email}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.email}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Gender}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.gender}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Age}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.age}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Matricule"/>
+                                </f:facet>
+                                <h:outputText value="#{item.matricule}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Phone}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.phone}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Guardian} #{lm.Email}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.guidemail}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Guardian} #{lm.Number}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.guidenumber}"/>
+                            </p:column>
+
+                        </p:dataTable>
+  
+                      <center>
+                        <h:panelGrid columns="5">
+                        
+                            <p:commandButton widgetVar="add" icon="ui-icon-plus" ignoreAutoUpdate="true" actionListener="#{patientController.prepareCreate}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Add}" />
+                            <p:commandButton widgetVar="modify" icon="ui-icon-pencil" ignoreAutoUpdate="true" actionListener="#{patientController.action}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Modify}" />
+                            <p:commandButton widgetVar="delete" icon="ui-icon-trash" ignoreAutoUpdate="true" actionListener="#{patientController.action}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Delete}" />
+                            <p:commandButton widgetVar="Consult"  value="#{lm.Consult}" ignoreAutoUpdate="true" actionListener="#{admissionController.action()}" />
+                            <p:commandButton icon="ui-icon-newwin" widgetVar="Print"  value="#{lm.print}" immediate="true"  ajax="false" action="#{patientController.print()}" update=":form2:edit" /> 
+                      
+                        </h:panelGrid> 
+                      </center>
+                    </h:form>
+
+                    <h:form id="form2">
+                        <p:dialog closable="false" modal="true" id="edit" widgetVar="e_dialog">
+                            <f:facet name="header">
+                                <h:outputText value="#{lm.Fill} #{lm.form}" />
+                            </f:facet>
+
+                            <h:panelGrid id="fields" columns="4">
+                            
+                                <p:outputLabel value="#{lm.Name}:" for="name" />
+                                <p:inputText  disabled="#{patientController.operation == 'delete' ? true : false}" id="name" required="true" requiredMessage="The name must be filled" value="#{patientController.patient.name}" title="#{lm.Name}" />
+                                <p:message for="name"/>
+                                <p:tooltip  for="name" showEvent="focus" hideEvent="blur" />
+
+                                <p:outputLabel value="#{lm.Location}:" for="location" />
+                                <p:inputText disabled="#{patientController.operation == 'delete' ? true : false}" required="true" id="location" value="#{patientController.patient.location}" title="#{lm.Location}" />
+                                <p:message for="location"/>
+                                <p:tooltip  for="location" showEvent="focus" hideEvent="blur" />
+                               
+                               <p:outputLabel value="#{lm.Email}:" for="email" />
+                               <p:inputText id="email" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.email}" required="true" title="Email" validatorMessage="#{patientController.patient.email} is not valid">
+                               <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                               </p:inputText>
+                               <p:message for="email" />
+                               <p:tooltip  for="email" showEvent="focus" hideEvent="blur" />
+
+                                <p:outputLabel value="#{lm.Gender}:" for="gender" />
+                                <p:selectOneMenu  disabled="#{patientController.operation == 'delete' ? true : false}"  required="true" id="gender" value="#{patientController.patient.gender}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                                    <f:selectItem itemLabel="Others" itemValue="Others" /> 
+                                </p:selectOneMenu>
+                                <p:message for="gender"/>
+                                <p:tooltip  for="gender" showEvent="focus" hideEvent="blur" />
+                               
+                               <p:outputLabel value="#{lm.Age}:" for="age" />
+                                <p:inputMask  maxlength="2" mask="9?9999" id="age" required="true" value="#{patientController.patient.age}" title="Age" disabled="#{patientController.operation == 'delete' ? true : false}"/>
+                                <p:message for="age"/>
+                                <p:tooltip  for="age" showEvent="focus" hideEvent="blur" />    
+                                
+                                
+                               
+                                <p:outputLabel value="#{lm.Phone} #{lm.Number}:" for="phone"  />
+                                <p:inputMask id="phone" mask="999-99-99-99" required="true" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.phone}" title="Phone" />
+                                <p:message for="phone"/>
+                                <p:tooltip  for="phone" showEvent="focus" hideEvent="blur" />
+
+                                <p:outputLabel value="#{lm.Guardian} #{lm.Email}:" for="gemail" />
+                                <p:inputText id="gemail" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.guidemail}" required="true" title="Email" validatorMessage="#{patientController.patient.guidemail} is not valid">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                                </p:inputText>
+                                <p:message for="gemail" />
+                                <p:tooltip  for="gemail" showEvent="focus" hideEvent="blur" />
+                                
+
+                                <p:outputLabel value="#{lm.Guardian} #{lm.Number}:" for="gphone" />
+                                <p:inputMask id="gphone" required="true" mask="999-99-99-99" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.guidenumber}" title="Phone" />
+                                <p:message for="gphone"/>
+                                <p:tooltip  for="gphone" showEvent="focus" hideEvent="blur" />
+
+                            </h:panelGrid>       
+                            <f:facet name="footer">
+                                <h:panelGrid style="width: 100%; text-align: center;" columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="Cancel" icon="ui-icon-close"  immediate="true" oncomplete="PF('e_dialog').hide()" >
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" icon="ui-icon-plus" actionListener="#{patientController.persist()}" update="fields,:form1:msg,:form1:table" process="edit,:form1" partialSubmit="false" />
+                                   
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+
+                    <h:form id="form3">
+                        <p:dialog closable="false" modal="true" id="edit" widgetVar="e_dialog">
+                            <f:facet name="header">
+                                <h:outputText value="#{lm.Edit} #{lm.content}" />
+                            </f:facet>
+
+                            <h:panelGrid id="fields" columns="4">
+                            
+                                <p:outputLabel value="#{lm.Name}:" for="name" />
+                                <p:inputText  disabled="#{patientController.operation == 'delete' ? true : false}" id="name" required="true" requiredMessage="The name must be filled" value="#{patientController.patient.name}" title="#{lm.Name}" />
+                                <p:message for="name"/>
+                                <p:tooltip  for="name" showEvent="focus" hideEvent="blur" />
+
+                                <p:outputLabel value="#{lm.Location}:" for="location" />
+                                <p:inputText disabled="#{patientController.operation == 'delete' ? true : false}" required="true" id="location" value="#{patientController.patient.location}" title="#{lm.Location}" />
+                                <p:message for="location"/>
+                                <p:tooltip  for="location" showEvent="focus" hideEvent="blur" />
+                               
+                               <p:outputLabel value="#{lm.Email}:" for="email" />
+                               <p:inputText id="email" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.email}" required="true" title="Email" validatorMessage="#{patientController.patient.email} is not valid">
+                             <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                               </p:inputText>
+                               <p:message for="email" />
+                               <p:tooltip  for="email" showEvent="focus" hideEvent="blur" />
+
+                                <p:outputLabel value="#{lm.Gender}:" for="gender" />
+                                <p:selectOneMenu  disabled="#{patientController.operation == 'delete' ? true : false}" required="true" id="gender" value="#{patientController.patient.gender}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                                </p:selectOneMenu>
+                                <p:message for="gender"/>
+                                <p:tooltip  for="gender" showEvent="focus" hideEvent="blur" />
+                                
+                                <p:outputLabel value="#{lm.Age}:" for="age" />
+                                <p:inputMask  maxlength="2" mask="9?9999" id="age" required="true"  value="#{patientController.patient.age}" title="Age" disabled="#{patientController.operation == 'delete' ? true : false}"/>
+                                <p:message for="age"/>
+                                <p:tooltip  for="age" showEvent="focus" hideEvent="blur" />    
+                                
+                               
+                                <p:outputLabel value="#{lm.Phone} #{lm.Number}:" for="phone"  />
+                                <p:inputMask id="phone" mask="999-99-99-99" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.phone}" title="Phone" required="true" />
+                                <p:message for="phone"/>
+                                <p:tooltip  for="phone" showEvent="focus" hideEvent="blur" />
+
+                                
+                               <p:outputLabel value="#{lm.Guardian} #{lm.Email}:" for="gemail" />
+                               <p:inputText id="gemail" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.guidemail}" required="true" title="Email" validatorMessage="#{patientController.patient.guidemail} is not valid">
+                               <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                               </p:inputText>
+                               <p:message for="gemail" />
+                               <p:tooltip  for="gemail" showEvent="focus" hideEvent="blur" />
+                                
+                                
+
+                                <p:outputLabel value="#{lm.Guardian} #{lm.Number}:" for="gphone" />
+                                <p:inputMask id="gphone" mask="999-99-99-99" required="true" disabled="#{patientController.operation == 'delete' ? true : false}" value="#{patientController.patient.guidenumber}" title="Phone" />
+                                <p:message for="gphone"/>
+                                <p:tooltip  for="gphone" showEvent="focus" hideEvent="blur" />
+
+                            </h:panelGrid>             
+                            <f:facet name="footer">
+                                <h:panelGrid style="width: 100%; text-align: center;" columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" icon="ui-icon-close"  immediate="true" oncomplete="PF('e_dialog').hide()" >
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Send}" icon="ui-icon-plus" actionListener="#{patientController.persist()}" update="fields,:form1:msg,:form1:table" process="edit,:form1" partialSubmit="false" />
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+

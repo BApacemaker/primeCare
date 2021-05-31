@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./home.xhtml">
+
+            <ui:define name="content">
+               
+                
+                <f:view>
+
+                        <h:form id="form1">
+                        <h1><h:outputText value="#{lm.List} #{lm.of} ward Category"  style="color:#173f75cc; font-family:cursive;"/></h1>              
+                                <p:panel>
+                                    <p:dataTable id="table" value="#{wardcategoryController.listofWardcategory}" var="item"
+                                                 selectionMode="single" selection="#{wardcategoryController.wardcategory}"
+                                 paginator="true"
+                                 rowKey="#{item.rank}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50" 
+                                 >
+
+                           <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Idwardcategory"/>
+                                </f:facet>
+                                <h:outputText value="#{item.idwardcategory}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Rank"/>
+                                </f:facet>
+                                <h:outputText value="#{item.rank}"/>
+                            </p:column>
+                       
+                            <p:column style="width:100px" headerText="#{lm.Operation}" >
+                                <p:commandButton widgetVar="modify"  icon="ui-icon-arrowrefresh-1-w" ignoreAutoUpdate="true" actionListener="#{wardcategoryController.action()}" />
+                                <p:commandButton widgetVar="delete" onclick="return confirm('Do you really want to delete?')"  icon="ui-icon-close" ignoreAutoUpdate="true" actionListener="#{wardcategoryController.deletes()}" action="Ward.xhtml?faces-redirect=true"  />                       
+                            </p:column>
+                        </p:dataTable>
+                            </p:panel>        
+                        <p:outputLabel id="msg" value="#{wardcategoryController.msg}" style="color:green;" />
+                        <p:separator />
+                        <h:panelGrid columns="5">
+                            <p:commandButton widgetVar="add" ignoreAutoUpdate="true" actionListener="#{wardcategoryController.clear}"  value="#{lm.Add}" icon="ui-icon-disk" />
+                        </h:panelGrid>
+                    </h:form>
+                    
+                    
+                    
+                </f:view>
+
+                
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

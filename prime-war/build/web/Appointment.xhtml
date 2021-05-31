@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionController.watchOut()}" />
+    </f:metadata>
+    <body>
+
+        <ui:composition template="./home.xhtml">
+
+            <ui:define name="content">
+
+                <f:view>
+                    <h:form id="form1">
+                        <h1><h:outputText value="#{lm.List} #{lm.of} #{lm.appointments}"  style="color:#173f75cc; font-family:cursive;"/></h1>              
+                         <p:dataTable id="table" value="#{appointmentController.listofAppointments}" var="item"
+                                         selectionMode="single" selection="#{appointmentController.appointment}"
+                                     paginator="true"
+                                     rowKey="#{item.idappiontment}"
+                                     rows="10"
+                                     rowsPerPageTemplate="10,20,30,40,50"
+                                     >
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Type}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Purpose}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.purpose}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Time}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.time}">
+                                    <f:convertDateTime pattern="HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Date}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.date}">
+                                    <f:convertDateTime pattern="MMM,dd,yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Email}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.email}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.patient}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.idpatient.name}"/>
+                            </p:column>
+                            <p:column style="width:100px" headerText="#{lm.Operation}" >
+                                <p:commandButton widgetVar="modify"  icon="ui-icon-arrowrefresh-1-w" ignoreAutoUpdate="true" actionListener="#{appointmentController.action()}" update=":form3:edit" oncomplete="PF('m_dialog').show()"/>
+                                <p:commandButton widgetVar="delete" action="Appointment.xhtml?faces-redirect=true"  onclick="return confirm('Do you really want to delete?')"  icon="ui-icon-close" ignoreAutoUpdate="true" actionListener="#{appointmentController.deletes()}" update=":form2:edit" oncomplete="PF('d_dialog').show()"/>                       
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:outputLabel id="msg" value="#{appointmentController.msg}" style="color:green;" />
+                        <p:separator />
+                        <h:panelGrid columns="5">
+                            <p:commandButton widgetVar="add" ignoreAutoUpdate="true" actionListener="#{appointmentController.clear}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Add}" icon="ui-icon-disk" />
+                        </h:panelGrid>
+                    </h:form>
+
+
+
+                    <h:form id="form2">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="e_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Fill} #{lm.form}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+                                <p:outputLabel value="#{lm.Time}:" for="time" />
+                                <p:calendar pattern="HH:mm" showOn="button" id="time"  value="#{appointmentController.appointment.time}"  title="#{lm.Time}" />
+                                <p:message for="time" />
+
+
+                                <p:outputLabel value="#{lm.Date}:" for="date" />
+                                <p:calendar pattern="MMM,dd,yyyy" showOn="button" id="date"   value="#{appointmentController.appointment.date}" title="#{lm.Date}" />
+                                <p:message for="date" />
+
+
+                                <p:outputLabel value="#{lm.Purpose}:" for="purpose" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4" id="purpose"  value="#{appointmentController.appointment.purpose}" title="Purpose" />
+                                <p:message for="purpose" />
+
+                                <p:outputLabel value="#{lm.Email}:" for="email"  />
+                                <p:inputText id="email" value="#{appointmentController.appointment.email}" title="#{lm.Email}"  required="true" />
+                                <p:message for="email"/>
+
+                                <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient"    value="#{appointmentController.patient.idpatient}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{appointmentController.listofPatients}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />
+
+                                
+                                <p:outputLabel value="#{lm.Type}:" for="type"  />
+                                <p:selectOneMenu id="type"   value="#{appointmentController.appointment.type}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Feminine" itemValue="Feminine" />
+                                    <f:selectItem itemLabel="Masculine" itemValue="Masculine" />
+                                    <f:selectItem itemLabel="Others" itemValue="Others" /> 
+                                </p:selectOneMenu>   
+                                <p:message for="type" />
+
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" immediate="true"  oncomplete="PF('e_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" actionListener="#{appointmentController.adds()}" update="fields,:form1:msg, :form1:table," process = "edit,:form2" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                    <h:form id="form3">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="m_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Edit} #{lm.content}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+
+                                <p:outputLabel value="#{lm.Time}:" for="time" />
+                                <p:calendar pattern="HH:mm" showOn="button" id="time"  value="#{appointmentController.appointment.time}"  title="#{lm.Time}" />
+                                <p:message for="time" />
+
+
+                                <p:outputLabel value="#{lm.Date}:" for="date" />
+                                <p:calendar pattern="MMM,dd,yyyy" showOn="button" id="date"   value="#{appointmentController.appointment.date}" title="#{lm.Date}" />
+                                <p:message for="date" />
+
+
+                                <p:outputLabel value="#{lm.Purpose}:" for="purpose" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4" id="purpose"  value="#{appointmentController.appointment.purpose}" title="#{lm.Purpose}" />
+                                <p:message for="purpose" />
+
+                                <p:outputLabel value="#{lm.Email}:" for="email"  />
+                                <p:inputText id="email" value="#{appointmentController.appointment.email}" title="#{lm.Email}"  required="true" />
+                                <p:message for="email"/>
+
+                                <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient"    value="#{appointmentController.patient.idpatient}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{admissionController.listofPatients}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />
+
+                                <p:outputLabel value="#{lm.Type}:" for="type"  />
+                                <p:selectOneMenu id="type"   value="#{appointmentController.appointment.type}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Feminine" itemValue="Feminine" />
+                                    <f:selectItem itemLabel="Masculine" itemValue="Masculine" />
+                                    <f:selectItem itemLabel="Others" itemValue="Others" /> 
+                                </p:selectOneMenu>   
+                                <p:message for="type" />
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" immediate="true"  oncomplete="PF('m_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" actionListener="#{appointmentController.modifys()}" update="fields,:form1:msg, :form1:table," process = "edit,:form3" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+

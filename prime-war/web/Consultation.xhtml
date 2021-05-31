@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionController.watchOut()}" />
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="./home.xhtml">
+
+            <ui:define name="content">
+
+                <f:view>
+               
+                    <h:form id="form1">
+                     <center>
+                       <p:outputLabel id="msg" value="#{consultationController.msg}" style="color:green;" />
+                    </center>
+                        <p:separator />
+                        <h1><h:outputText value="#{lm.List} #{lm.of} #{lm.Consultation}"  style="color:#173f75cc; font-family:cursive;"/></h1>              
+                          <p:dataTable id="table" value="#{consultationController.listofConsultations}" var="item"
+                                           selectionMode="single" selection="#{consultationController.consultation}"
+                                     paginator="true"
+                                     rowKey="#{item.idconsultation}"
+                                     rows="10"
+                                     rowsPerPageTemplate="10,20,30,40,50"
+                                     >
+                        
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Detail}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.description}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Type}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.type}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Diagnose}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.diagnose}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.patient}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.idpatient.name}"/>
+                            </p:column>
+                            <p:column style="width:100px" headerText="#{lm.Operation}" >
+                                <p:commandButton widgetVar="modify"  icon="ui-icon-arrowrefresh-1-w" ignoreAutoUpdate="true" actionListener="#{consultationController.action()}" update=":form3:edit" oncomplete="PF('m_dialog').show()"/>
+                                <p:commandButton widgetVar="delete" action="Consultation.xhtml?faces-redirect=true" onclick="return confirm('Do you really want to delete?')"  icon="ui-icon-close" ignoreAutoUpdate="true" actionListener="#{consultationController.deletes()}" update=":form2:edit" oncomplete="PF('d_dialog').show()"/>                       
+
+                            </p:column>
+                        </p:dataTable>
+
+                        
+                        <h:panelGrid columns="5">
+                            <p:commandButton widgetVar="add" ignoreAutoUpdate="true" actionListener="#{consultationController.clear}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Add}" icon="ui-icon-disk" />
+                        </h:panelGrid>
+                    </h:form>
+
+
+
+                    <h:form id="form2">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="e_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Fill} #{lm.form}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+
+                                <p:outputLabel value="#{lm.Detail}:" for="description" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4"  id="description" value="#{consultationController.consultation.description}" />
+                                <p:message for="description" />
+                                
+                                
+                                <p:outputLabel value="#{lm.Type}:" for="type" />
+                                <p:inputText  />
+                                <p:message for="type" />
+                                
+                                
+                                
+                                <p:outputLabel value="#{lm.Type}:" for="type" />
+                                <p:selectOneMenu  id="type" value="#{consultationController.consultation.type}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="General Consultation" itemValue="General Consultation" />
+                                    <f:selectItem itemLabel="Special Consultation" itemValue="Special Consultation" />
+                                </p:selectOneMenu>
+                                <p:message for="type" />
+                                
+                               
+                                 <p:outputLabel value="#{lm.Diagnose}:" for="diagnose" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4"  id="diagnose" value="#{consultationController.consultation.diagnose}" />
+                                <p:message for="diagnose" />
+                                
+
+                                <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient" value="#{consultationController.patient.idpatient}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{consultationController.listofPatients}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" immediate="true"  oncomplete="PF('m_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" actionListener="#{consultationController.adds()}" update="fields,:form1:msg, :form1:table," process = "edit,:form3" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+
+
+                        </p:dialog>
+                    </h:form>
+
+                    <h:form id="form3">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="m_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Edit} #{lm.content}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+
+                                <p:outputLabel value="#{lm.Detail}:" for="description" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4"  id="description" value="#{consultationController.consultation.description}" />
+                                <p:message for="description" />
+                                
+                                
+                                <p:outputLabel value="#{lm.Type}:" for="type" />
+                                <p:inputText  />
+                                <p:message for="type" />
+                                
+                                
+                                
+                                <p:outputLabel value="#{lm.Type}:" for="type" />
+                                <p:selectOneMenu  id="type" value="#{consultationController.consultation.type}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="General Consultation" itemValue="General Consultation" />
+                                    <f:selectItem itemLabel="Special Consultation" itemValue="Special Consultation" />
+                                </p:selectOneMenu>
+                                <p:message for="type" />
+                                
+                               
+                                 <p:outputLabel value="#{lm.Diagnose}:" for="diagnose" />
+                                <p:inputTextarea rows="3" cols="50" queryDelay="750" minQueryLength="4"  id="diagnose" value="#{consultationController.consultation.diagnose}" />
+                                <p:message for="diagnose" />
+                                
+
+                                <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient" value="#{consultationController.patient.idpatient}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{consultationController.listofPatients}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" immediate="true"  oncomplete="PF('m_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" actionListener="#{consultationController.modifys()}" update="fields,:form1:msg, :form1:table," process = "edit,:form3" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+

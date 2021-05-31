@@ -1,0 +1,302 @@
+<?xml version='1.0' encoding='UTF-8' ?>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+     <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionController.watchOut()}" />
+    </f:metadata>
+    <body>
+
+        <ui:composition template="./home.xhtml">
+
+            <f:view>
+
+                <h:form>
+                    <h1><h:outputText value="List"/></h1>
+                    <p:dataTable  var="item">
+                    </p:dataTable>
+                </h:form>
+            </f:view>
+
+
+
+            <ui:define name="content">
+
+                <f:view>
+                    <h:form id="form1">
+                        <center>
+                          <p:outputLabel id="msg" value="#{dischargeController.msg}" style="color:green;" />
+                          <p:separator />
+                        </center>
+                        <p:growl id="growl" showDetail="true" sticky="true" /> 
+                       <div id="upB"> 
+                        <p:commandLink  immediate="true" title="#{lm.Email}" oncomplete="PF('email_dialog').show()" >              
+                             <img src="resources/img/credit/g.jpg"  width="40" height="30"  alt="" />       
+                        </p:commandLink>
+                       <p:commandButton icon="ui-icon-newwin" widgetVar="print" value="Hospitalisation Document" immediate="true"  ajax="false" action="#{dischargeController.print()}" update=":form2:edit" />                       
+                       
+                       </div>
+                        <h1><h:outputText value="Discharged Patients"  style="color:#173f75cc; font-family:cursive;"/></h1>              
+
+                        <p:dataTable id="table" value="#{dischargeController.listofDischarge}" var="item"
+                                     selectionMode="single" selection="#{dischargeController.discharge}" 
+                                     paginator="true"
+                                     rowKey="#{item.iddischarge}"
+                                     rows="10"
+                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                     >
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Date}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.date}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Time}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.time}">
+                                    <f:convertDateTime pattern="HH:mm:ss" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.patient} #{lm.condition}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.patcondition}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.Reason}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reason}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{lm.patient}"/>
+                                </f:facet>
+                                <h:outputText value="#{item.idadmission.idpatient.name}"/>
+                            </p:column>                           
+                            <p:column style="width:100px" headerText="#{lm.Operation}" >
+                                <p:commandButton widgetVar="modify"  icon="ui-icon-arrowrefresh-1-w" ignoreAutoUpdate="true" actionListener="#{dischargeController.action()}" update=":form3:edit" oncomplete="PF('m_dialog').show()"/>
+                                <p:commandButton widgetVar="delete" onclick="return confirm('Do you really want to delete?')"  icon="ui-icon-close" ignoreAutoUpdate="true" action="Discharge.xhtml?faces-redirect=true" actionListener="#{dischargeController.deletes()}" update=":form2:edit" oncomplete="PF('d_dialog').show()"/>  
+                                
+                            </p:column>
+                        </p:dataTable>
+
+                        <center>
+                        <h:panelGrid columns="5">
+                            <p:commandButton widgetVar="add" ignoreAutoUpdate="true" actionListener="#{dischargeController.clear}" update=":form2:edit" oncomplete="PF('e_dialog').show()" value="#{lm.Discharge} #{lm.patient}" icon="ui-icon-disk" />
+                            <p:commandButton widgetVar="Consult"  value="#{lm.Consult}" ignoreAutoUpdate="true" actionListener="#{admissionController.action()}" />
+                            <p:commandButton icon="ui-icon-newwin" value="#{lm.print}" ignoreAutoUpdate="true"  />
+                          
+                            <h:form>
+                                <p:panel header="Check list" id="horizontal"  toggleable="true" toggleOrientation="horizontal">
+                                    <p:selectOneListbox id="advanced" value="#{patientController.listOfAdurations}" var="p" filter="true" filterMatchMode="contains" >
+                                        <f:selectItems value="#{patientController.listOfAdurations}" var="patient" itemLabel="#{patient.idpatient.name}" itemValue="#{patient.idpatient.name}" />
+
+                                        <p:column>
+                                            <h:commandLink  value="#{p}"/>
+                                        </p:column>
+                                    </p:selectOneListbox>
+                                </p:panel>
+
+                            </h:form>
+                      
+                        </h:panelGrid>
+                          </center>
+                    </h:form>
+
+
+
+                     <h:form id="form2">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="e_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Fill} #{lm.form}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+
+
+                                <p:outputLabel value="#{lm.Time}:" for="time" />
+                                <p:calendar pattern="HH:mm:ss" showOn="button" id="time"  value="#{dischargeController.discharge.time}" title="#{lm.Time}" disabled="#{admissionController.operation == 'delete' ? true : false}" />
+                                <p:message for="time" />
+
+
+                                <p:outputLabel value="#{lm.Date}:" for="date" />
+                                <p:calendar pattern="MMM,dd,yyyy" showOn="button" id="date"  disabled="#{admissionController.operation == 'delete' ? true : false}" value="#{dischargeController.discharge.date}" title="#{lm.Date}" />
+                                <p:message for="date" />
+
+
+                                   <p:outputLabel value="#{lm.patient} #{lm.condition}:" for="patcondition" />
+                                <p:selectOneMenu  id="patcondition" value="#{dischargeController.discharge.patcondition}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Patient fully regained strength after a Surgery" itemValue="Patient fully regained strength after a Surgery" />
+                                    <f:selectItem itemLabel="Patient fully regained from sickness" itemValue="Patient fully regained from sickness" />
+                                    <f:selectItem itemLabel="Patient has not fully recovered from sickness" itemValue="Patient has not fully recovered from sickness" />
+                                    <f:selectItem itemLabel="Patient fully regained has been properly checked up" itemValue="Patient fully regained has been properly checked up" />
+                                    <f:selectItem itemLabel="Patient has had a Proper bed rest" itemValue="Patient has had a Proper bed rest" />
+                                    <f:selectItem itemLabel="Patient's Condition has not improved" itemValue="Patient's Condition has not improved" />
+                               </p:selectOneMenu>
+                                <p:message for="patcondition" /> 
+
+                                <p:outputLabel value="#{lm.Reason}:" for="reason" />
+                                <p:selectOneMenu  id="reason" value="#{dischargeController.discharge.reason}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Patient can not meet up with clinic bills" itemValue="Patient can not meet up with clinic bills" />
+                                    <f:selectItem itemLabel="Patient died during medical treatement" itemValue="Patient died during medical treatement" />
+                                    <f:selectItem itemLabel="Patient Successfully completed medical treatements" itemValue="Patient Successfully completed medical treatements" /> 
+                                    <f:selectItem itemLabel="Patient needs to visit a polyclinic or a hospital" itemValue="Patient needs to visit a polyclinic or a hospital" /> 
+                             
+                                </p:selectOneMenu> <p:message for="reason"/>
+
+                                <p:outputLabel value="#{lm.patient}:" for="idadmission" />
+                                <p:selectOneMenu id="idadmission" value="#{dischargeController.admission.idadmission}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{Admission.idadmission}" value="#{dischargeController.listOfAdmissions}" var="Admission" itemLabel="#{Admission.idpatient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idadmission"  />
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="Cancel" immediate="true"  oncomplete="PF('e_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="Save" actionListener="#{dischargeController.adds()}" update="fields,:form1:msg, :form1:table," process = "edit,:form2" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                    <h:form id="form3">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="m_dialog" showEffect="explode" hideEffect="blind" >
+                            <h1><h:outputText value="#{lm.Edit} #{lm.content}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                            <p:panelGrid id="fields" columns="3">
+
+
+                                <p:outputLabel value="#{lm.Time}:" for="time" />
+                                <p:calendar pattern="HH:mm:ss" showOn="button" id="time"  value="#{dischargeController.discharge.time}" title="#{lm.Time}" disabled="#{admissionController.operation == 'delete' ? true : false}" />
+                                <p:message for="time" />
+
+
+                                <p:outputLabel value="#{lm.Date}:" for="date" />
+                                <p:calendar pattern="MMM,dd,yyyy" showOn="button" id="date"  disabled="#{admissionController.operation == 'delete' ? true : false}" value="#{dischargeController.discharge.date}" title="#{lm.Date}" />
+                                <p:message for="date" />
+
+
+                                <p:outputLabel value="#{lm.patient} #{lm.condition}:" for="patcondition" />
+                                <p:selectOneMenu  id="patcondition" value="#{dischargeController.discharge.patcondition}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Patient fully regained strength after a Surgery" itemValue="Patient fully regained strength after a Surgery" />
+                                    <f:selectItem itemLabel="Patient fully regained from sickness" itemValue="Patient fully regained from sickness" />
+                                    <f:selectItem itemLabel="Patient has not fully recovered from sickness" itemValue="Patient has not fully recovered from sickness" />
+                                    <f:selectItem itemLabel="Patient has been properly checked up" itemValue="Patient has been properly checked up" />
+                                    <f:selectItem itemLabel="Patient has had a Proper bed rest" itemValue="Patient has had a Proper bed rest" />
+                                    <f:selectItem itemLabel="Patient's Condition has not improved" itemValue="Patient's Condition has not improved" />
+                               </p:selectOneMenu>
+                                <p:message for="patcondition" /> 
+
+                                <p:outputLabel value="#{lm.Reason}:" for="reason" />
+                                <p:selectOneMenu  id="reason" value="#{dischargeController.discharge.reason}" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Patient can not meet up with clinic bills" itemValue="- Patient can not meet up with clinic bills" />
+                                    <f:selectItem itemLabel="Patient died during medical treatement" itemValue="Patient died during medical treatement" />
+                                    <f:selectItem itemLabel="Patient Successfully completed medical treatements" itemValue="Patient Successfully completed medical treatements" /> 
+                                    <f:selectItem itemLabel="Patient needs to visit a polyclinic or a hospital" itemValue="Patient needs to visit a polyclinic or a hospital" /> 
+                             
+                                </p:selectOneMenu> <p:message for="reason"/>
+
+                                <p:outputLabel value="#{lm.patient}:" for="idadmission" />
+                                <p:selectOneMenu id="idadmission" value="#{dischargeController.admission.idadmission}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{Admission.idadmission}" value="#{dischargeController.listOfAdmissions}" var="Admission" itemLabel="#{Admission.idpatient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idadmission" />
+
+
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="2">
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Cancel}" immediate="true"  oncomplete="PF('m_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+
+                                    <p:commandButton ignoreAutoUpdate="true" value="#{lm.Save}" actionListener="#{dischargeController.modifys()}" update="fields,:form1:msg, :form1:table," process = "edit,:form3" partialSubmit="false" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:dialog>
+                    </h:form>
+
+                     <h:form id="form6">
+                        <p:dialog closable="false" modal="true" id ="edit" widgetVar="email_dialog" showEffect="explode" hideEffect="bounce" >
+                            <h1><h:outputText value="#{lm.Fill} #{lm.form}"  style="color:#173f75cc; font-family:cursive;"/></h1> 
+                                                  
+                             <p:panelGrid id="fields" columns="2">
+                                
+                                <p:outputLabel value="#{lm.to}:" for="To" />
+                                <p:selectOneMenu id="To" value="#{emailController.toemail}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.guidemail}" value="#{patientController.listOfPatient}" var="patient" itemLabel="#{patient.guidemail}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="To" />
+                                <p:tooltip  for="To" showEvent="focus" hideEvent="blur" />
+
+                               <p:outputLabel value="#{lm.Subject}:" for="Subject" />
+                               <p:selectOneMenu  id="Subject" value="#{emailController.subject}"  required="true" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Hi Madam/sir" itemValue="Hi Madam/sir" />
+                                    <f:selectItem itemLabel="Good Morning Madam/sir" itemValue="Good Morning Madam/sir" />
+                                    <f:selectItem itemLabel="Good Evening Madam/sir" itemValue="Good Evening Madam/sir" />
+                               </p:selectOneMenu> 
+                               <p:message for="Subject" />
+                                <p:tooltip  for="Subject" showEvent="focus" hideEvent="blur" />
+                               
+                                 <p:outputLabel value="#{lm.Message}:" for="Message" />
+                                 <p:selectOneMenu  id="Message" value="#{emailController.message}"  required="true" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="A patient under your care has to be transfered to another branch. Your presence may be needed" itemValue="A patient under your care has to be transfered to another branch. Your presence may be needed" />
+                                    <f:selectItem itemLabel="A patient under your care has to be discharge. Your presence may be needed" itemValue="A patient under your care has to be discharge. Your presence may be needed" />
+                               </p:selectOneMenu> 
+                               <p:message for="Message" />
+                                <p:tooltip  for="Message" showEvent="focus" hideEvent="blur" />
+                                
+                            </p:panelGrid>
+                           
+                                                     
+                            <f:facet name="footer">
+                                <h:panelGrid style="Width:100%; text-align:center; " columns="3">
+                                    <p:commandButton ignoreAutoUpdate="true" value="Cancel" immediate="true"  oncomplete="PF('email_dialog').hide()">
+                                        <p:resetInput target="fields" />
+                                    </p:commandButton>
+                                    ,
+                                    <p:commandButton id="ok" ignoreAutoUpdate="true"  value="Send" actionListener="#{emailController.send()}" update="fields,:form1:msg, :form1:table," process = "edit,:form6" icon="ui-icon-check" />
+
+                                </h:panelGrid>
+                            </f:facet>
+                            
+                             <center>  
+                              <p:outputLabel id="msg" value="#{sessionController.msg}" style="color:green;" />
+                            </center>
+                            <p:defaultCommand target="ok" />
+                        </p:dialog>
+                    </h:form>
+
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+

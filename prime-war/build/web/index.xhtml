@@ -1,0 +1,155 @@
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="/css/default.css"/>
+        <h:outputStylesheet name="/css/front.css"/> 
+    
+       <link rel="icon" href="resources/img/credit/logo.jpg"  width="60" height="60" />
+        <title>PrimeCare</title>
+    </h:head>
+    
+    <h:body >
+        <f:view locale="#{sessionController.language}">
+ 
+
+            <div id="toptop">
+                <center> <img src="resources/img/credit/logo.jpg" width="200" height="60"  alt=""/></center>
+            </div>
+
+            <div id="top">
+
+                <div id="img1">
+                    <h:form id="lang">
+                        
+                           <p:commandLink  immediate="true" action="#{sessionController.english()}"   title="#{lm.English}" >
+                            <img src="resources/img/credit/UK-flag.png"  alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true" action="#{sessionController.french()}" title="#{lm.French}" >
+                            <img src="resources/img/credit/Fr-flag.png" alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true"  title="Chinese" >
+                            <img src="resources/img/credit/China.png" width="30" height="33"  alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true"  title="Facebook" >
+
+                            <img src="resources/img/credit/f.jpg" width="40" height="30" alt=""/>
+                        </p:commandLink>
+
+                    </h:form>
+                </div>
+            </div>
+
+            <h:form >     
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar>
+                     <f:facet name="left">
+                    <p:outputLabel id="msg" value="#{patientController.msg}" style="color:green;" />
+                    </f:facet>
+                    <f:facet name="right">
+
+                        <p:commandButton type="button" value="Login" icon="ui-icon-unlocked" onclick="PF('loginDialog').show();" />
+
+                    </f:facet>
+
+                </p:toolbar>
+            </h:form>
+
+
+            <div id="left"> 
+                <p:imageSwitch effect="wipe" style="height: 100%;">
+                    <ui:repeat value="#{imagesView.images}" var="image">
+                        <p:graphicImage name="images/#{image}"  style="width: 100%; height: 40%;" />
+                    </ui:repeat>
+                </p:imageSwitch> 
+
+
+                <div class="wrapper">
+                    <div class="container">
+                        <h2>Patient's Form</h2><hr/>
+
+                        <form class="form">
+                            <input type="text" placeholder="Matricule"></input>
+                            <input type="password" placeholder="Email"></input>
+                            <input type="button" value="Login" id="login-button"></input>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="content" class="right_content">
+                <ui:insert name="content" >
+                    <p:tooltip />
+                    <p:dialog showEffect="fade" header="#{lm.connect}"  widgetVar="loginDialog" id="loginDialog" modal="true">
+
+                        <h:form id="loginform">
+             
+                            <p:fieldset  style="font-weight:bold; font-style:italic; font-size:10px; margin:auto; margin-top:2%; width:39%;" >
+
+                                <f:facet name="legend">
+                                    <img src="resources/img/credit/r3.jpg" width="240" height="70"  alt="?"/>
+                                </f:facet>
+                                
+                                <p:panel style="font-weight:bold; " id="form_con">
+            
+                                    <f:facet name="header">
+                                        <h:outputText value="#{lm.Authentification}" style="font-size:10pt;margin-bottom:5%; " />
+                                    </f:facet>
+                                     <p:growl id="msgs" showDetail="true" />
+                                    <h:panelGrid id="fields" columns="3">
+                                        <p:outputLabel value="#{lm.Login}:" for="login" /> 
+                                        <p:inputText required="true" requiredMessage="Required value" autocomplete="off" id="login"  value="#{sessionController.currentUser.login}" title="#{lm.Login}" />
+                                        <p:message for="login" />
+
+                                        <p:outputLabel value="#{lm.Password}:" for="pwd" />
+                                        <p:password required="true" requiredMessage="Required value" autocomplete="off" id="pwd"  value="#{sessionController.currentUser.pwd}" title="#{lm.Password}" inline="true" feedback="true" />
+                                        <p:message for="pwd" />
+                                    </h:panelGrid>
+
+                                    <f:facet name="footer">
+                                        <h:panelGrid style="width: 100%; text-align: center;" columns="2">
+                                            <p:commandButton onclick="PF('loginDialog').hide();" value="Cancel" immediate="true" >
+                                                <p:resetInput target="fields" />
+                                            </p:commandButton>
+                                            <p:commandButton id="ok" value="Connect"  process="fields,:loginform" action="#{sessionController.authenticate()}"  partialSubmit="true"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </p:panel>
+                              
+                            </p:fieldset>
+                            <center>  
+                              <p:outputLabel id="msg" value="#{sessionController.msg}" style="color:green;" />
+                            </center>
+                            <p:defaultCommand target="ok" />
+                        </h:form>
+                    </p:dialog>
+
+                </ui:insert>
+                <img src="resources/images/hopital.jpg" alt="" style="width: 100%; height: 100%;" />
+
+            </div>
+            <div id="bottom">
+
+                <center>
+
+                    <h:outputText value="&copy; copyright 2017 Mondoa Nelson" style="font-size: 9pt; color:#fff;"></h:outputText>
+                </center>
+
+            </div>
+
+
+        </f:view>
+    </h:body>
+
+
+</html> 
+
+

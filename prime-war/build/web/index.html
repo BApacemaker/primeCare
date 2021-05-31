@@ -1,0 +1,138 @@
+
+package controller;
+
+import entities.Admission;
+import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.persistence.EntityManager;
+import java.util.List;
+import javax.ejb.EJB;
+import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.PieChartModel;
+import org.primefaces.model.chart.CartesianChartModel;
+import sessions.AdmissionFacadeLocal;
+
+@ManagedBean
+@SessionScoped
+public class Chartbean implements Serializable{
+
+    @EJB
+    private AdmissionFacadeLocal admissionFacade;
+
+
+
+    private EntityManager em;
+    List<Admission> admList;
+    private PieChartModel pieModel;
+    private CartesianChartModel categoryModel;
+    
+    /* instance of a chartController */
+    
+    public Chartbean(){
+      pieModel = new PieChartModel();
+      pieModel.set("", 0);
+      categoryModel = new CartesianChartModel();
+      ChartSeries fakultas = new ChartSeries();
+      fakultas.set("",0);
+      categoryModel.addSeries(fakultas);
+  
+    }
+    
+    public void chartJumlahMahasiswaPerFakulas(){
+    
+      pieModel = new PieChartModel();
+      categoryModel = new CartesianChartModel();
+      ChartSeries fakultas = new ChartSeries();
+      fakultas.setLabel("Fakultas");
+      Admission adm = new Admission();
+      List<Object[]> pieList = (List<Object[]>)
+              
+    em.createQuery("SELECT a.idpatient.name, COUNT(a.idpatient) FROM Admission a GROUP BY a.idpatient.name ORDER BY COUNT(a.idpatient) DESC").getResultList();             
+    if(pieList != null){
+         for(Object[] pie : pieList){
+         
+           pieModel.set((String) pie[0], (Number) pie[1]);
+           fakultas.set((String) pie[0], (Number) pie[1]);
+         }
+      
+          categoryModel.addSeries(fakultas);
+      }
+      
+    }   
+
+    public AdmissionFacadeLocal getAdmissionFacade() {
+        return admissionFacade;
+    }
+
+    public void setAdmissionFacade(AdmissionFacadeLocal admissionFacade) {
+        this.admissionFacade = admissionFacade;
+    }
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
+
+    public List<Admission> getAdmList() {
+        return admList;
+    }
+
+    public void setAdmList(List<Admission> admList) {
+        this.admList = admList;
+    }
+
+    public PieChartModel getPieModel() {
+        return pieModel;
+    }
+
+    public void setPieModel(PieChartModel pieModel) {
+        this.pieModel = pieModel;
+    }
+
+    public CartesianChartModel getCategoryModel() {
+        return categoryModel;
+    }
+
+    public void setCategoryModel(CartesianChartModel categoryModel) {
+        this.categoryModel = categoryModel;
+    }
+    
+   
+    
+}
+
+                                ad
+                                 <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient"  value="#{admissionController.patient.idpatient}" disabled="true" >
+                                    <f:selectItem itemLabel="#{patient.name}" itemValue="#{patient.idpatient}"  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{admissionController.listofPatients}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />
+                      
+                                <p:outputLabel value="#{lm.ward}:" for="idward" />
+                                <p:selectOneMenu id="idward" value="#{admissionController.ward.idward}" disabled="#{admissionController.operation == 'o' ? true : false}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{ward.idward}" value="#{admissionController.listofWards}" var="ward" itemLabel="#{ward.name}"  />
+                                </p:selectOneMenu>   
+
+                                <p:outputLabel value="#{lm.patient}:" for="idpatient"/>
+                                <p:inputText id="idpatient"  value="#{admissionController.patient.idpatient}" disabled="true" />
+                                <p:message  for="idpatient" />
+                                
+   
+                                 <p:outputLabel value="#{lm.ward}:" for="idward"/>
+                                <p:inputText id="idward" value="#{admissionController.ward.idward}" disabled="true" />
+                                <p:message  for="idward" />
+                                
+                                tr
+                                
+                                 <p:outputLabel value="#{lm.patient}:" for="idpatient" />
+                                <p:selectOneMenu id="idpatient" disabled="#{transferController.operation == 'delete' ? true : false}"  value="#{transferController.patient.idpatient}" >
+                                    <f:selectItem itemLabel="" itemValue=""  />
+                                    <f:selectItems itemValue="#{patient.idpatient}" value="#{transferController.listofPatient}" var="patient" itemLabel="#{patient.name}"  />
+                                </p:selectOneMenu>   
+                                <p:message for="idpatient" />

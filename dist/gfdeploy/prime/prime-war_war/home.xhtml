@@ -1,0 +1,222 @@
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionController.watchOut()}" />
+    </f:metadata>
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="/css/default.css"/>
+        <h:outputStylesheet name="/css/cssLayout.css"/> 
+
+        <link rel="icon" href="resources/img/credit/logo.jpg"  width="60" height="60" />
+        <title>PrimeCare</title>
+    </h:head>
+
+    <h:body>
+        <f:view locale="#{sessionController.language}">
+
+
+            <div id="toptop">
+                <center> <img src="resources/img/credit/logo.jpg" width="200" height="60"  alt=""/></center>
+            </div>
+
+            <div id="top">
+
+                <div class="badge" > #{lm.Welcome} : &nbsp;&nbsp; <span style="font-family: Comic Sans MS; font-style:normal; font-size:14px; color:black; ">[ #{sessionController.currentUser.name} ]</span> </div>
+
+
+                <div id="img1">
+                    <h:form id="lang">
+
+                        <p:commandLink  immediate="true" action="#{sessionController.english()}"   title="#{lm.English}" >
+                            <img src="resources/img/credit/UK-flag.png"  alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true" action="#{sessionController.french()}" title="#{lm.French}" >
+                            <img src="resources/img/credit/Fr-flag.png" alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true"  title="Chinese" >
+                            <img src="resources/img/credit/China.png" width="30" height="33"  alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  immediate="true"  title="Facebook" >
+
+                            <img src="resources/img/credit/f.jpg" width="40" height="30" alt=""/>
+                        </p:commandLink>
+
+                        <p:commandLink  immediate="true"  title="setting" >
+                            <img src="resources/img/credit/setting.jpg" width="40" height="30" alt="" />
+                        </p:commandLink>
+
+                        <p:commandLink  immediate="true" title="message" >      
+                            <img src="resources/img/credit/me.jpg" width="45" height="35"  alt=""/>   
+                        </p:commandLink>
+
+                    </h:form>
+                </div>
+
+            </div>
+
+
+            <h:form >     
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar >
+                    <f:facet name="left" >
+
+                        <p:commandLink immediate="true" rendered="#{sessionController.ward}" action="Ward.xhtml?faces-redirect=true" title="#{lm.Ward}" >
+                            <img src="resources/img/credit/hard.jpg" width="100" height="40" alt=""/>
+
+                        </p:commandLink>
+                        <p:commandLink  immediate="true" rendered="#{sessionController.transfer}" action="Transfer.xhtml?faces-redirect=true" title="#{lm.Transfer}" >
+                            <img src="resources/img/credit/tranfer.jpg" width="100" height="40" alt=""/>
+                        </p:commandLink>
+
+                        <p:commandLink immediate="true" rendered="#{sessionController.bed}" action="Bed.xhtml?faces-redirect=true" title="Transfer" >
+                            <img src="resources/img/credit/bed.jpg" width="100" height="40" alt=""/>
+                        </p:commandLink>
+                        <p:commandLink immediate="true" rendered="#{sessionController.medicaltest}" action="MedicalTest.xhtml?faces-redirect=true" title="#{lm.Medical} Test" >
+                            <img src="resources/img/credit/lab.jpg" width="100" height="40" alt=""/>
+                        </p:commandLink>
+                        <p:commandLink immediate="true" rendered="#{sessionController.surgery}" action="Surgery.xhtml?faces-redirect=true"  title="#{lm.Surgery}" >
+                            <img src="resources/img/credit/operate.jpg" width="100" height="40" alt=""/>
+                        </p:commandLink>
+                        <p:commandLink  rendered="#{sessionController.progress}" action="Progress.xhtml?faces-redirect=true" immediate="true"  title="#{lm.Progress}" >
+                            <img src="resources/img/credit/chart.jpg" width="100" height="40" alt=""/>    
+                        </p:commandLink>
+
+
+                    </f:facet>
+
+                    <f:facet name="right">
+
+                        <h:form>
+                            <p:messages id="messages" />
+                            <p:inputText  id="txt1" style="width:60%; margin-top:7px;" required="true" label="Text 1">
+                                <f:validateLength minimum="2" />
+                            </p:inputText>
+                            <p:commandButton value="#{lm.Go}" />
+                            <p:message for="txt1" />
+                        </h:form>
+
+
+                    </f:facet>
+
+                </p:toolbar>
+            </h:form>
+
+
+
+            <div>
+                <div id="left">
+                    <h:form>
+
+                        <p:menu style="width:154px; ">
+                            <p:submenu label="#{lm.Dashboard}"  rendered="#{sessionController.dashboard}">
+                                <p:menuitem icon="ui-icon-signal" rendered="#{sessionController.progress}" immediate="true" value="#{lm.Progress}"/>
+                                <p:menuitem icon="ui-icon-signal" rendered="#{sessionController.activity}" immediate="true" value="#{lm.Activities}"/>
+                                <p:menuitem icon="ui-icon-signal" rendered="#{sessionController.operatons}" immediate="true" value="operatons"/>
+                                <p:menuitem icon="ui-icon-arrow-4-diag" rendered="#{sessionController.branch}" immediate="true" action="Branch.xhtml?faces-redirect=true"  value="#{lm.Branch}"/>
+                                <p:menuitem icon="ui-icon-grip-dotted-horizontal"  rendered="#{sessionController.department}" immediate="true" action="Department.xhtml?faces-redirect=true" value="Department"/>
+                            </p:submenu>
+                            <p:submenu label="#{lm.Profile}" rendered="#{sessionController.profile}">
+                                <p:menuitem  icon="ui-icon-person" rendered="#{sessionController.usergroup}" immediate="true" action="Usergroup.xhtml?faces-redirect=true"  value="#{lm.User} #{lm.groups}"/>
+                                <p:menuitem  icon="ui-icon-person" rendered="#{sessionController.user}" immediate="true" action="User.xhtml?faces-redirect=true"  value="#{lm.User}"/>
+                                <p:menuitem  icon="ui-icon-locked" rendered="#{sessionController.privilege}" immediate="true" action="Privilege.xhtml?faces-redirect=true" value="#{lm.Privilege}"/>
+
+                            </p:submenu>
+                            <p:submenu label="#{lm.Hospitalization}"  rendered="#{sessionController.hospitalization}">
+                                <p:menuitem icon="ui-icon-arrowreturnthick-1-s" rendered="#{sessionController.admission}" immediate="true" action="Admission.xhtml?faces-redirect=true"  value="#{lm.Admission}"/>
+                                <p:menuitem  icon="ui-icon-arrowreturnthick-1-n" rendered="#{sessionController.discharge}" action="Discharge.xhtml?faces-redirect=true" immediate="true " value="#{lm.Discharge}"/>
+                                <p:menuitem  icon="ui-icon-calculator" rendered="#{sessionController.treatement}"  action="Treatement.xhtml?faces-redirect=true" immediate="true " value="#{lm.Treatement}"/>
+                                <p:menuitem  icon="ui-icon-link" rendered="#{sessionController.transfer}" action="Transfer.xhtml?faces-redirect=true" immediate="true " value="#{lm.Transfer}"/>
+
+                            </p:submenu>
+                            <p:submenu label="#{lm.Allocate} #{lm.Ward}" rendered="#{sessionController.ward}">
+                                <p:menuitem  icon="ui-icon-radio-off" action="wardcategory.xhtml?faces-redirect=true"  immediate="true" rendered="#{sessionController.wardcategory}"  value="Ward Category"/>     
+                                <p:menuitem  icon="ui-icon-radio-off" action="Ward.xhtml?faces-redirect=true"  rendered="#{sessionController.ward}" immediate="true"  value="#{lm.Ward}"/>
+                                <p:menuitem rendered="#{sessionController.bed}" action="Bed.xhtml?faces-redirect=true" icon="ui-icon-grip-solid-horizontal" immediate="true"   value="#{lm.Bed}"/>
+
+                            </p:submenu>
+                            <p:submenu label="#{lm.Outpatient}"  rendered="#{sessionController.outpatient}">
+
+                                <p:menuitem  icon="ui-icon-newwin" rendered="#{sessionController.parameter}" action="Parameter.xhtml?faces-redirect=true" immediate="true " value="#{lm.Parameter}"/>
+                                <p:menuitem  icon="ui-icon-pencil" rendered="#{sessionController.consultation}"  immediate="true" action="Consultation.xhtml?faces-redirect=true"  value="#{lm.Consultation}" ></p:menuitem>
+
+                            </p:submenu>
+
+                            <p:submenu label="#{lm.Reception}"  rendered="#{sessionController.reception}">
+                                <p:menuitem  icon="ui-icon-script" rendered="#{sessionController.patient}" action="Patient.xhtml?faces-redirect=true" immediate="true " value="#{lm.Patient}"/>
+                                <p:menuitem  icon="ui-icon-clipboard" rendered="#{sessionController.appointment}" immediate="true" action="Appointment.xhtml?faces-redirect=true"  value="#{lm.Appointment}"/>
+                                <p:menuitem  icon="ui-icon-document-b" rendered="#{sessionController.medicalservice}" action="Medicalservice.xhtml?faces-redirect=true" immediate="true " value="#{lm.Medical} #{lm.service}"/>
+                            </p:submenu>
+
+                        </p:menu>
+
+                    </h:form >
+                  
+                   <h:form style="font-style: italic;" rendered="#{sessionController.medical}">
+                        <br/><hr/> <h2 style="background-color: #ffff; font-family:initial; "> ... services</h2><hr/>
+                            <p:selectOneListbox  style="background-color: #f5f4edcc;" id="advanced" value="#{medicalserviceController.listofMedicalservices}" var="p" filter="true" filterMatchMode="contains" >
+                                <f:selectItems  value="#{medicalserviceController.listofMedicalservices}" var="patient" itemLabel="#{patient.name}" itemValue="#{patient.name} |..| #{patient.cost}" />
+
+                                <p:column >
+                                    <h:commandLink  style="color:#efefef;" value="#{p}"/>
+                                </p:column>
+                            </p:selectOneListbox>
+                      
+
+                    </h:form>
+
+
+                </div>
+                <div>
+
+
+                    <div id="right" style="background-image:url(resources/img/credit/r4.jpg); background-repeat: no-repeat; background-size:100% 100%;">
+
+                        <center><h2>[#{sessionController.currentUser.idusergroup.name}]</h2></center>
+                        <img src="resources/img/credit/images.jpg"  alt="..." style="border-radius: 50%; width:160px; height:100px;" title="#{lm.logout}" ></img>
+
+                        <hr/>
+                        <center> 
+                            <h:form>
+                                <p:commandButton immediate="true" value="#{lm.logout}" icon="ui-icon-locked" action="#{sessionController.logOut()}" />
+                            </h:form>
+                        </center>
+                        <hr/> <br/> 
+
+                        <p:clock pattern="HH:mm:ss dd.MM.yyyy" mode="server" />
+
+
+                    </div>
+
+
+
+                    <div id="content" class="right_content">
+                        <ui:insert name="content" >
+
+                        </ui:insert>
+
+                    </div>
+                </div>
+
+                <div id="bottom">
+
+                    <center>
+
+                        <h:outputText value="&copy; copyright 2017 Mondoa Nelson" style="font-size: 9pt; color:#fff;"></h:outputText>
+                    </center>
+
+                </div></div>
+        </f:view>
+    </h:body>
+
+</html> 
+
+
