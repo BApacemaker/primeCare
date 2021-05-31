@@ -19,17 +19,18 @@ Modules
 Tools
 --------------------------
 
-PgAdmin
-Netbeans 
-Visual Paradigm
+- PgAdmin
+- Netbeans IDE
+- Visual Paradigm
+- Web Browser (google Chrome)
 
 
 
 Technologies
 --------------------------
-JAVA Enterprise Edition (JEE)
-JAVA Persistence API (JAP)
-JAVA Server Faces (JSF)
-PrimeFaces
-Postgresql
+- JAVA Enterprise Edition (JEE)
+- JAVA Persistence API (JAP)
+- JAVA Server Faces (JSF)
+- PrimeFaces
+- Postgresql
 
